@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		56C7755021A7A6030001A45A /* SwiftSiriWaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56C7754F21A7A6030001A45A /* SwiftSiriWaveformView.swift */; };
 		736165992176725C0062D377 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 736165982176725C0062D377 /* README.md */; };
 		738998B621515C9900E378D8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 738998B521515C9900E378D8 /* AppDelegate.swift */; };
 		738998B821515C9900E378D8 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 738998B721515C9900E378D8 /* ViewController.swift */; };
@@ -16,16 +17,17 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		56C7754F21A7A6030001A45A /* SwiftSiriWaveformView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftSiriWaveformView.swift; sourceTree = "<group>"; };
 		736165982176725C0062D377 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		738998B221515C9900E378D8 /* SpokenWord.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpokenWord.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		738998B221515C9900E378D8 /* Lango.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lango.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		738998B521515C9900E378D8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		738998B721515C9900E378D8 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		738998BA21515C9900E378D8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		738998BC21515C9A00E378D8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		738998BF21515C9A00E378D8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		738998C121515C9A00E378D8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		EEC74EC0EEC74FE000000001 /* SampleCode.xcconfig */ = {isa = PBXFileReference; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
-		EEC8D580EEC9A4A000000001 /* LICENSE.txt */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE.txt; sourceTree = "<group>"; };
+		EEC74EC0EEC74FE000000001 /* SampleCode.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
+		EEC8D580EEC9A4A000000001 /* LICENSE.txt */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,7 +45,7 @@
 			isa = PBXGroup;
 			children = (
 				736165982176725C0062D377 /* README.md */,
-				738998B421515C9900E378D8 /* SpokenWord */,
+				738998B421515C9900E378D8 /* Lango */,
 				738998B321515C9900E378D8 /* Products */,
 				EEC80120EEC797E000000001 /* Configuration */,
 				EEC9A3D0EEC9A39000000001 /* LICENSE */,
@@ -53,22 +55,23 @@
 		738998B321515C9900E378D8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				738998B221515C9900E378D8 /* SpokenWord.app */,
+				738998B221515C9900E378D8 /* Lango.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		738998B421515C9900E378D8 /* SpokenWord */ = {
+		738998B421515C9900E378D8 /* Lango */ = {
 			isa = PBXGroup;
 			children = (
 				738998B521515C9900E378D8 /* AppDelegate.swift */,
 				738998B721515C9900E378D8 /* ViewController.swift */,
+				56C7754F21A7A6030001A45A /* SwiftSiriWaveformView.swift */,
 				738998B921515C9900E378D8 /* Main.storyboard */,
 				738998BC21515C9A00E378D8 /* Assets.xcassets */,
 				738998BE21515C9A00E378D8 /* LaunchScreen.storyboard */,
 				738998C121515C9A00E378D8 /* Info.plist */,
 			);
-			path = SpokenWord;
+			path = Lango;
 			sourceTree = "<group>";
 		};
 		EEC80120EEC797E000000001 /* Configuration */ = {
@@ -84,29 +87,27 @@
 			children = (
 				EEC8D580EEC9A4A000000001 /* LICENSE.txt */,
 			);
-			name = LICENSE;
 			path = LICENSE;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		738998B121515C9900E378D8 /* SpokenWord */ = {
+		738998B121515C9900E378D8 /* Lango */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 738998C421515C9A00E378D8 /* Build configuration list for PBXNativeTarget "SpokenWord" */;
+			buildConfigurationList = 738998C421515C9A00E378D8 /* Build configuration list for PBXNativeTarget "Lango" */;
 			buildPhases = (
 				738998AE21515C9900E378D8 /* Sources */,
 				738998AF21515C9900E378D8 /* Frameworks */,
 				738998B021515C9900E378D8 /* Resources */,
-				739BA0D821540B55003980A5,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = SpokenWord;
+			name = Lango;
 			productName = SpokenWord;
-			productReference = 738998B221515C9900E378D8 /* SpokenWord.app */;
+			productReference = 738998B221515C9900E378D8 /* Lango.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -124,7 +125,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 738998AD21515C9900E378D8 /* Build configuration list for PBXProject "SpokenWord" */;
+			buildConfigurationList = 738998AD21515C9900E378D8 /* Build configuration list for PBXProject "Lango" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -137,7 +138,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				738998B121515C9900E378D8 /* SpokenWord */,
+				738998B121515C9900E378D8 /* Lango */,
 			);
 		};
 /* End PBXProject section */
@@ -161,6 +162,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				56C7755021A7A6030001A45A /* SwiftSiriWaveformView.swift in Sources */,
 				738998B821515C9900E378D8 /* ViewController.swift in Sources */,
 				738998B621515C9900E378D8 /* AppDelegate.swift in Sources */,
 			);
@@ -349,7 +351,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		738998AD21515C9900E378D8 /* Build configuration list for PBXProject "SpokenWord" */ = {
+		738998AD21515C9900E378D8 /* Build configuration list for PBXProject "Lango" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				738998C221515C9A00E378D8 /* Debug */,
@@ -358,7 +360,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		738998C421515C9A00E378D8 /* Build configuration list for PBXNativeTarget "SpokenWord" */ = {
+		738998C421515C9A00E378D8 /* Build configuration list for PBXNativeTarget "Lango" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				738998C521515C9A00E378D8 /* Debug */,

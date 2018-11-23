@@ -19,9 +19,22 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     
     private let audioEngine = AVAudioEngine()
     
-    @IBOutlet var textView: UITextView!
+    private let stringStart = "Pronounce"
+    
+    private let stringStop = "Stop Listening"
+
+    
+//    @IBOutlet var textView: UITextView!
     
     @IBOutlet var recordButton: UIButton!
+    
+    @IBOutlet var segmentView: UITextView!
+    
+    @IBOutlet var gradeView: UILabel!
+    
+    @IBOutlet var gradeLabelView: UILabel!
+    
+    @IBOutlet weak var audioView: SwiftSiriWaveformView!
     
     // MARK: UIViewController
     
@@ -87,11 +100,54 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         // Keep a reference to the task so that it can be canceled.
         recognitionTask = speechRecognizer.recognitionTask(with: recognitionRequest) { result, error in
             var isFinal = false
+            let coloredSentence = NSMutableAttributedString()
+            var grade = "N/A"
             
             if let result = result {
                 // Update the text view with the results.
-                self.textView.text = result.bestTranscription.formattedString
+                print (result.bestTranscription.segments as Any)
+//                print (result.transcriptions.last?.segments.last?.substring as Any)
+//                print (result.transcriptions.last?.segments.last?.confidence as Any)
+                print("------------------------------------")
+                
+//                self.textView.text = result.bestTranscription.formattedString
                 isFinal = result.isFinal
+                
+                for t in result.bestTranscription.segments
+                {
+                    coloredSentence.append(self.wordColor(word: t.substring, score: t.confidence))
+                }
+                
+                if isFinal
+                {
+                    var minConfidence:Float = 1
+                    
+                    for s in result.bestTranscription.segments
+                    {
+                        minConfidence = min(minConfidence, s.confidence)
+
+                    }
+                    
+                    switch minConfidence
+                    {
+                        case _ where minConfidence > 0.9: grade = "A+"
+                        case _ where minConfidence > 0.8: grade = "A-"
+                        case _ where minConfidence > 0.7: grade = "B+"
+                        case _ where minConfidence > 0.6: grade = "B-"
+                        case _ where minConfidence > 0.4: grade = "C"
+                        default: grade = "F"
+                    }
+                
+                    self.gradeView.isHidden = false
+                    self.gradeLabelView.isHidden = false
+                    self.gradeView.text = grade
+                }
+            
+                
+//                self.segmentView.text = segments.joined(separator: " ")
+                
+                self.segmentView.attributedText = coloredSentence
+                
             }
             
             if error != nil || isFinal {
@@ -103,7 +159,8 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                 self.recognitionTask = nil
                 
                 self.recordButton.isEnabled = true
-                self.recordButton.setTitle("Start Recording", for: [])
+                self.recordButton.setTitle(self.stringStart, for: [])
+                
             }
         }
 
@@ -117,15 +174,33 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         try audioEngine.start()
         
         // Let the user know to start talking.
-        textView.text = "(Go ahead, I'm listening)"
+//        textView.text = "(Go ahead, I'm listening)"
+    }
+    
+    public func wordColor(word:String, score:Float) -> NSAttributedString
+    {
+        var color = UIColor.black
+        switch score {
+            case _ where score == 0: color = UIColor.gray
+            case _ where score < 0.3: color = UIColor.red
+            case _ where score < 0.8: color = UIColor.orange
+            default: color = UIColor.black
+        }
+        
+        let attributes: [NSAttributedString.Key: Any] = [.foregroundColor: color, .font: UIFont.systemFont(ofSize: 36)]
+        let attributedWord = NSAttributedString(string: word+" ", attributes: attributes)
+        
+        return attributedWord
     }
     
     // MARK: SFSpeechRecognizerDelegate
     
     public func speechRecognizer(_ speechRecognizer: SFSpeechRecognizer, availabilityDidChange available: Bool) {
         if available {
+            gradeLabelView.isHidden = true
+            gradeView.isHidden = true
             recordButton.isEnabled = true
-            recordButton.setTitle("Start Recording", for: [])
+            recordButton.setTitle(stringStart, for: [])
         } else {
             recordButton.isEnabled = false
             recordButton.setTitle("Recognition Not Available", for: .disabled)
@@ -143,7 +218,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         } else {
             do {
                 try startRecording()
-                recordButton.setTitle("Stop Recording", for: [])
+                recordButton.setTitle(stringStop, for: [])
             } catch {
                 recordButton.setTitle("Recording Not Available", for: [])
             }

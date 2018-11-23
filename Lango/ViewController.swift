@@ -1,9 +1,3 @@
-/*
-See LICENSE folder for this sample’s licensing information.
-
-Abstract:
-The root view controller that provides a button to start and stop recording, and which displays the speech recognition results.
-*/
 
 import UIKit
 import Speech
@@ -19,12 +13,20 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     
     private let audioEngine = AVAudioEngine()
     
-    private let stringStart = "Pronounce"
+    private let stringStart = "Start"
     
-    private let stringStop = "Stop Listening"
+    private let stringStop = "Stop"
+    
+    private let sentences = ["How are you today", "The University of Chicago", "The ring is on the wrong finger", "Five days a week", "blah blah blah blah"]
+    
+    private var currentSentenceIndex = 0
 
     
 //    @IBOutlet var textView: UITextView!
+    
+    @IBOutlet var previousButton: UIButton!
+    
+    @IBOutlet var nextButton: UIButton!
     
     @IBOutlet var recordButton: UIButton!
     
@@ -34,15 +36,22 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     
     @IBOutlet var gradeLabelView: UILabel!
     
-    @IBOutlet weak var audioView: SwiftSiriWaveformView!
+    @IBOutlet var sentenceView: UITextView!
     
-    // MARK: UIViewController
     
+//    sentenceView.textContainer.heightTracksTextView = true
+//    sentenceView.isScrollEnabled = false
+    
+//    @IBOutlet weak var audioView: SwiftSiriWaveformView!
+    
+    let synthesizer = AVSpeechSynthesizer()
+
     public override func viewDidLoad() {
         super.viewDidLoad()
         
         // Disable the record buttons until authorization has been granted.
         recordButton.isEnabled = false
+        selectSentence()
     }
     
     override public func viewDidAppear(_ animated: Bool) {
@@ -54,8 +63,6 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         // Make the authorization request.
         SFSpeechRecognizer.requestAuthorization { authStatus in
 
-            // Divert to the app's main thread so that the UI
-            // can be updated.
             OperationQueue.main.addOperation {
                 switch authStatus {
                 case .authorized:
@@ -77,27 +84,32 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         }
     }
     
+    private func selectSentence()
+    {
+        sentenceView.text = "\"" + sentences[currentSentenceIndex] + "\""
+        segmentView.text = ""
+        
+        self.gradeView.isHidden = true
+        self.gradeLabelView.isHidden = true
+    }
+    
+    
     private func startRecording() throws {
         
-        // Cancel the previous task if it's running.
         if let recognitionTask = recognitionTask {
             recognitionTask.cancel()
             self.recognitionTask = nil
         }
         
-        // Configure the audio session for the app.
         let audioSession = AVAudioSession.sharedInstance()
         try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
         try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
         let inputNode = audioEngine.inputNode
 
-        // Create and configure the speech recognition request.
         recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
         guard let recognitionRequest = recognitionRequest else { fatalError("Unable to created a SFSpeechAudioBufferRecognitionRequest object") }
         recognitionRequest.shouldReportPartialResults = true
                 
-        // Create a recognition task for the speech recognition session.
-        // Keep a reference to the task so that it can be canceled.
         recognitionTask = speechRecognizer.recognitionTask(with: recognitionRequest) { result, error in
             var isFinal = false
             let coloredSentence = NSMutableAttributedString()
@@ -105,17 +117,28 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             
             if let result = result {
                 // Update the text view with the results.
-                print (result.bestTranscription.segments as Any)
+//                print (result.bestTranscription.segments as Any)
 //                print (result.transcriptions.last?.segments.last?.substring as Any)
 //                print (result.transcriptions.last?.segments.last?.confidence as Any)
-                print("------------------------------------")
+//                print("------------------------------------")
                 
 //                self.textView.text = result.bestTranscription.formattedString
                 isFinal = result.isFinal
                 
+                
                 for t in result.bestTranscription.segments
                 {
                     coloredSentence.append(self.wordColor(word: t.substring, score: t.confidence))
+                    
+                }
+                if result.bestTranscription.formattedString.lowercased() == self.sentences[self.currentSentenceIndex].lowercased()
+                {
+                    self.audioEngine.stop()
+                    self.recognitionRequest?.endAudio()
+                    self.recordButton.isEnabled = false
+                    self.recordButton.setTitle("Stopping", for: .disabled)
+                        
+                    isFinal = true
                 }
                 
                 if isFinal
@@ -130,13 +153,20 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                     
                     switch minConfidence
                     {
-                        case _ where minConfidence > 0.9: grade = "A+"
-                        case _ where minConfidence > 0.8: grade = "A-"
-                        case _ where minConfidence > 0.7: grade = "B+"
-                        case _ where minConfidence > 0.6: grade = "B-"
-                        case _ where minConfidence > 0.4: grade = "C"
-                        default: grade = "F"
+                        case _ where minConfidence > 0.8: grade = "A+"
+                        case _ where minConfidence > 0.7: grade = "A"
+                        case _ where minConfidence > 0.6: grade = "A-"
+                        case _ where minConfidence > 0.5: grade = "B+"
+                        case _ where minConfidence > 0.4: grade = "B-"
+                        case _ where minConfidence > 0.3: grade = "C"
+                        default: grade = "D"
                     }
+                    
+                    if result.bestTranscription.formattedString.lowercased() != self.sentences[self.currentSentenceIndex].lowercased()
+                    {
+                        grade = "F"
+                    }
+                    
                 
                     self.gradeView.isHidden = false
                     self.gradeLabelView.isHidden = false
@@ -173,8 +203,8 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         audioEngine.prepare()
         try audioEngine.start()
         
-        // Let the user know to start talking.
-//        textView.text = "(Go ahead, I'm listening)"
+        segmentView.textColor = UIColor.gray
+        segmentView.text = "(Listening...)"
     }
     
     public func wordColor(word:String, score:Float) -> NSAttributedString
@@ -182,24 +212,25 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         var color = UIColor.black
         switch score {
             case _ where score == 0: color = UIColor.gray
-            case _ where score < 0.3: color = UIColor.red
-            case _ where score < 0.8: color = UIColor.orange
-            default: color = UIColor.black
+            case _ where score < 0.1: color = UIColor.red
+            case _ where score < 0.5: color = UIColor.orange
+            default: color = UIColor.green
         }
         
-        let attributes: [NSAttributedString.Key: Any] = [.foregroundColor: color, .font: UIFont.systemFont(ofSize: 36)]
+        let attributes: [NSAttributedString.Key: Any] = [.foregroundColor: color, .font: UIFont.systemFont(ofSize: 40)]
         let attributedWord = NSAttributedString(string: word+" ", attributes: attributes)
         
         return attributedWord
     }
     
-    // MARK: SFSpeechRecognizerDelegate
     
     public func speechRecognizer(_ speechRecognizer: SFSpeechRecognizer, availabilityDidChange available: Bool) {
         if available {
             gradeLabelView.isHidden = true
             gradeView.isHidden = true
             recordButton.isEnabled = true
+            previousButton.isEnabled = true
+            nextButton.isEnabled = true
             recordButton.setTitle(stringStart, for: [])
         } else {
             recordButton.isEnabled = false
@@ -207,22 +238,53 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         }
     }
     
-    // MARK: Interface Builder actions
-    
     @IBAction func recordButtonTapped() {
         if audioEngine.isRunning {
             audioEngine.stop()
             recognitionRequest?.endAudio()
+//            previousButton.isEnabled = false
+//            nextButton.isEnabled = false
             recordButton.isEnabled = false
             recordButton.setTitle("Stopping", for: .disabled)
         } else {
             do {
                 try startRecording()
                 recordButton.setTitle(stringStop, for: [])
+                gradeView.isHidden = true
+                gradeLabelView.isHidden = true
+                
             } catch {
                 recordButton.setTitle("Recording Not Available", for: [])
             }
         }
     }
+    
+    @IBAction func speechButtonTapped()
+    {
+        textToSpeech()
+    }
+        
+    private func textToSpeech()
+    {
+        let utterance = AVSpeechUtterance(string: sentences[currentSentenceIndex])
+//        utterance.rate = 0.4
+        
+        synthesizer.speak(utterance)
+        
+    }
+    
+    @IBAction func previousButtonTapped()
+    {
+        currentSentenceIndex = max(currentSentenceIndex - 1,0)
+        selectSentence()
+    }
+    
+    @IBAction func nextButtonTapped()
+    {
+        currentSentenceIndex = min(sentences.count - 1, currentSentenceIndex + 1)
+        selectSentence()
+    }
+    
+    
 }
 

@@ -17,7 +17,7 @@ public class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     
     private let stringStop = "Stop"
     
-    private let sentences = ["How are you today", "The University of Chicago", "The ring is on the wrong finger", "Five days a week", "blah blah blah blah"]
+    private let sentences = ["How are you today", "Five days a week", "The University of Chicago", "The ring is on the wrong finger", "blah blah blah blah"]
     
     private var currentSentenceIndex = 0
 
